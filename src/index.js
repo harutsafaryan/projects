@@ -8,9 +8,10 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Root from './routes/root';
 import ErrorPage from './components/error-page';
 import Index from './routes';
-import Project from './routes/project';
+import Project, {loader as projectLoader} from './routes/project';
 import { AuthProvider, RequireAuth } from 'react-auth-kit';
 import Login from './routes/login';
+import NewProject, {action as newProjectAction} from './routes/newProject';
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,14 @@ const router = createBrowserRouter([
       },
       {
         path:'projects',
-        element: <RequireAuth loginPath='/login'><Project/></RequireAuth>
+        element: <Project/>,
+        children: [
+          {
+            path: 'new',
+            element: <NewProject/>,
+            action: newProjectAction
+          }
+        ]
       }
     ]
   }

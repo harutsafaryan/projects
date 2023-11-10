@@ -37,7 +37,7 @@ header li {
   display: inline;
 }
 
-li a {
+/* li a {
   font-weight: 500;
   display: block;
   padding: 8px;
@@ -45,7 +45,7 @@ li a {
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-}
+} */
 
 li a:hover {
   color: green;

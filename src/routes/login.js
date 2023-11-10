@@ -1,25 +1,24 @@
-import axios, {AxiosError} from "axios";
 import { useSignIn } from "react-auth-kit";
 import { Form, useNavigate } from "react-router-dom";
 import { URI } from '../utility/constants'
 import { useState } from "react";
+import axios from "axios";
 
 export default function Login() {
 
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
+    const [user, setUser] = useState("");
     const [password, setPassword] = useState("");
     const signIn = useSignIn();
 
     const onSubmit = async () => {
         try {
-
-            const response = await axios.post(`${URI}/Authentication/signin`, { username, password });
+            const response = await axios.post(`${URI}/Authentication/signin`, { user, password });
             signIn({
                 token: response.data.token,
                 expiresIn: 3600,
                 tokenType: "Bearer",
-                authState: { userName: response.data.userName, id: response.data.id, role: response.data.role }
+                authState: { user: response.data.user, id: response.data.id, role: response.data.role }
             })
         }
         catch (error) {
@@ -48,7 +47,7 @@ export default function Login() {
                     type="text"
                     required
                     className="form-control"
-                    onChange={event => setUsername(event.target.value)}>
+                    onChange={event => setUser(event.target.value)}>
                 </input>
             </div>
             <div className="form-outline mb-4">
