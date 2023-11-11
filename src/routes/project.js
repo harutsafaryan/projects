@@ -9,15 +9,18 @@ const projectsQuery = () => ({
     queryFn: () => getProjects(),
 })
 
-export default function Project() {
+export async function loader(queryClient) {
+    return async function ({ params }) {
+        const query = projectsQuery;
+        return queryClient.getQueryData(query.queryKey) ??
+            await queryClient.fetchQuery(query)
+    }
+}
 
+export default function Project() {
     const auth = useAuthUser();
     const navigate = useNavigate();
-    const  { isLoading, isError, data : projects, error } = useQuery({
-        queryKey: ['projects'],
-        queryFn: () => getProjects(),
-    })
-    console.log("projects: ", projects)
+    const { isLoading, isError, data: projects, error } = useQuery(projectsQuery())
 
 
     useEffect(() => {
@@ -27,30 +30,34 @@ export default function Project() {
 
     if (isLoading) {
         return <span>Loading...</span>
-      }
-    
-      if (isError) {
+    }
+
+    if (isError) {
         return <span>Error: {error.message}</span>
-      }
+    }
 
     return (
         <>
-            <h1>project page ...</h1>
-            <button onClick={() => navigate('new')}>New</button>
-            {
-                projects.length ? (
-                    <ul>
-                        {projects.map(project => (
-                            <li key={project.id}>
-                                <NavLink to={`${project.id}`}>{project.description}</NavLink>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <i>no projetcs</i>
-                )
-            }
-            <Outlet/>
+            <div>
+                <button onClick={() => navigate('new')}>New</button>
+                {
+                    projects.length ? (
+                        <ul>
+                            {projects.map(project => (
+                                <li key={project.id}>
+                                    <NavLink to={`${project.id}`}>{project.description}</NavLink>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <i>no projetcs</i>
+                    )
+                }
+            </div>
+            <div>
+                <h1>project page ...</h1>
+                <Outlet />
+            </div>
         </>
     )
 }

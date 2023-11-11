@@ -7,33 +7,34 @@ export default function Root() {
     console.log('auth: ', auth());
     const signOut = useSignOut();
 
+
     //style={{pointerEvents:'none'}}
     return (
         <>
             <header>
                 <nav>
-                    <ul>
-                        <li>
-                            <NavLink to="/Home">Home</NavLink>
+                    <ul className="header_ul">
+                        <li className="header_li">
+                            <NavLink className="li_a" to="/Home">Home</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/Projects">Projects</NavLink>
+                        <li className="header_li">
+                            <NavLink className="li_a" to="/Projects">Projects</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/Login">Login</NavLink>
+                        <li className="header_li">
+                            <NavLink className="li_a" to="/Login">Login</NavLink>
                         </li>
-                        <li>
-                            <NavLink onClick={() => signOut()}>Logout</NavLink>
+                        <li className="header_li">
+                            <NavLink className="li_a" onClick={() => signOut()}>Logout</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/Register">Register</NavLink>
+                        <li className="header_li">
+                            <NavLink className="li_a" to="/Register">Register</NavLink>
                         </li>
-                        <li>
-                            <NavLink to="/Profile">Profile</NavLink>
-                        </li>
+                        <li className="header_li">
+                            <NavLink className="li_a" to="/Profile">Profile</NavLink>
+                        </li >
                         {
                             (auth()?.user) &&
-                            <li>
+                            <li className="li_a">
                                 Hello {auth().user}
                             </li>
                         }

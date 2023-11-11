@@ -32,6 +32,7 @@ const router = createBrowserRouter([
       {
         path:'projects',
         element: <Project/>,
+        loader: projectLoader,
         children: [
           {
             path: 'new',
