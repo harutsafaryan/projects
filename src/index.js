@@ -3,46 +3,47 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'; 
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Root from './routes/root';
 import ErrorPage from './components/error-page';
 import Index from './routes';
-import Project, {loader as projectLoader} from './routes/project';
-import { AuthProvider, RequireAuth } from 'react-auth-kit';
+import { AuthProvider } from 'react-auth-kit';
 import Login from './routes/login';
-import NewProject, {action as newProjectAction} from './routes/newProject';
+import ProtectedRoute from './components/protectedRoute';
+import Root, { loader as projectsLoader } from './routes/root';
+import Project, { loader as projectLoader } from './routes/project';
+import NewProject, { loader as newProjectLoader, action as newProjectAction } from './routes/newProject';
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root />,
+    element: <ProtectedRoute><Root /></ProtectedRoute>,
     errorElement: <ErrorPage />,
+    loader: projectsLoader(queryClient),
     children: [
       {
-        index:true,
-        element: <Index/>
+        index: true,
+        element: <Index />
       },
       {
-        path: 'login',
-        element: <Login/>
+        path: 'projects/new',
+        element: <ProtectedRoute><NewProject /></ProtectedRoute>,
+        loader: newProjectLoader(queryClient),
+        action: newProjectAction(queryClient)
       },
       {
-        path:'projects',
-        element: <Project/>,
-        loader: projectLoader,
-        children: [
-          {
-            path: 'new',
-            element: <NewProject/>,
-            action: newProjectAction
-          }
-        ]
-      }
+        path: 'projects/:projectId',
+        element: <ProtectedRoute><Project /> </ProtectedRoute>,
+        loader: projectLoader(queryClient),
+      },
     ]
-  }
+  },
+  {
+    path: 'login',
+    element: <Login />
+  },
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

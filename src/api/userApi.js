@@ -1,4 +1,3 @@
-
 import axios from "axios";
 import { URI } from "../utility/constants";
 import getCookie from "../utility/getCookie";
@@ -10,6 +9,9 @@ const userApi = axios.create({
 });
 
 export async function getCustomers() {
+    if (!token)
+        return null;
+
     const response = await userApi.get('user/getclients');
     return response.data;
 }

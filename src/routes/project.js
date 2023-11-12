@@ -1,32 +1,23 @@
-import { useEffect } from "react";
-import { useAuthUser } from "react-auth-kit"
-import { Link, NavLink, Outlet, redirect, useLoaderData, useNavigate } from "react-router-dom";
-import { getProjects } from "../api/projectApi";
-import { useQuery, fetchQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom"
+import { getProject } from "../api/projectApi";
+import { useQuery } from "@tanstack/react-query";
 
-const projectsQuery = () => ({
-    queryKey: ['projects'],
-    queryFn: () => getProjects(),
+const projectQuery = (id) => ({
+    queryKey: ['projects', 'id', id],
+    queryFn: () => getProject(id)
 })
 
-export async function loader(queryClient) {
-    return async function ({ params }) {
-        const query = projectsQuery;
-        return queryClient.getQueryData(query.queryKey) ??
-            await queryClient.fetchQuery(query)
-    }
-}
+export const loader =
+    (queryClient) =>
+        async ({ params }) => {
+            const query = projectQuery(params.projectId);
+            return queryClient.getQueryData(query.queryKey) ??
+                await queryClient.fetchQuery(query);
+        }
 
 export default function Project() {
-    const auth = useAuthUser();
-    const navigate = useNavigate();
-    const { isLoading, isError, data: projects, error } = useQuery(projectsQuery())
-
-
-    useEffect(() => {
-        if (!auth())
-            navigate('login');
-    })
+    const params = useParams();
+    const { isLoading, isError, data: project, error } = useQuery(projectQuery(params.projectId));
 
     if (isLoading) {
         return <span>Loading...</span>
@@ -38,26 +29,8 @@ export default function Project() {
 
     return (
         <>
-            <div>
-                <button onClick={() => navigate('new')}>New</button>
-                {
-                    projects.length ? (
-                        <ul>
-                            {projects.map(project => (
-                                <li key={project.id}>
-                                    <NavLink to={`${project.id}`}>{project.description}</NavLink>
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <i>no projetcs</i>
-                    )
-                }
-            </div>
-            <div>
-                <h1>project page ...</h1>
-                <Outlet />
-            </div>
+            <p>project details {project.id}</p>
+            <p>project details {project.description}</p>
         </>
     )
 }

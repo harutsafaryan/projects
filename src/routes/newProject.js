@@ -4,48 +4,64 @@ import { addProject } from "../api/projectApi";
 import { getCustomers } from "../api/userApi";
 import { useQuery } from "@tanstack/react-query";
 
-export async function loader() {
-}
+const customersQuery = () => ({
+    queryKey: ['customers'],
+    queryFn: () => getCustomers(),
+})
 
-export async function action({ request }) {
-    let formData = await request.formData();
-    const project = Object.fromEntries(formData);
-    const response = await addProject(project);
-    console.log('response: ', response);
-    return redirect('/projects');
-}
+export const loader = (queryClient) =>
+    async () => {
+        const query = customersQuery()
+        return queryClient.getQueryData(query.queryKey) ??
+            await queryClient.fetchQuery(query)
+    }
+
+export const action = (queryClient) =>
+    async ({ request }) => {
+        let formData = await request.formData();
+        const project = Object.fromEntries(formData);
+        const response = await addProject(project);
+        if (response.status === 200) {
+            await queryClient.invalidateQueries({ queryKey: ['projects'] })
+            return redirect('/');
+        }
+        else {
+            throw new Response('', {
+                status: 404,
+                statusText: 'Not Found'
+            })
+        }
+    }
 
 export default function NewProject() {
     const auth = useAuthUser();
-    const role = auth().role;
+    const { isLoading, isError, data: customers, error } = useQuery(customersQuery())
 
-    const { isLoading, isError, data: customers, error } = useQuery({
-        queryKey: ['customers'],
-        queryFn: () => getCustomers()
-    })
-
-    if (isLoading) {
+    if (isLoading)
         return <span>Loading...</span>
-      }
-    
-      if (isError) {
+
+    if (isError)
         return <span>Error: {error.message}</span>
-      }
+
+    let clientList = null;
+    if (auth().role === 'employee') {
+        clientList = (
+            <select name="customerId">
+                {customers.map(client => <option key={client.id} value={client.id}>{client.userName}</option>)}
+            </select>
+        )
+    }
+    else {
+        clientList = <input type="text" name="customerId" value={auth().id} ></input>
+    }
 
     return (
         <>
             <h1>New project page...</h1>
-            <h1>{customers[0].email}</h1>
             <Form method="post">
                 <input type="text" name="description" />
-                <input type="" name="customerId" />
-                <datalist>
-                    <option>Red</option>
-                    <option>Yellow</option>
-                    <option>Green</option>
-                    <option>Blue</option>
-                </datalist>
-                <button>New</button>
+                {clientList}
+                <button>Save</button>
             </Form>
         </>
     )
