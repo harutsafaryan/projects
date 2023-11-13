@@ -39,7 +39,7 @@ export default function Root() {
                     <div className="sidebar">
                         <button onClick={() => navigate('projects/new')}>New</button>
                         {
-                            projects.length ? (
+                            projects?.length ? (
                                 <ul>
                                     {projects.map(project => (
                                         <li key={project.id}>

@@ -13,6 +13,7 @@ import ProtectedRoute from './components/protectedRoute';
 import Root, { loader as projectsLoader } from './routes/root';
 import Project, { loader as projectLoader } from './routes/project';
 import NewProject, { loader as newProjectLoader, action as newProjectAction } from './routes/newProject';
+import ProjectDeleted from './routes/projectDeleted';
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
         path: 'projects/:projectId',
         element: <ProtectedRoute><Project /> </ProtectedRoute>,
         loader: projectLoader(queryClient),
+      },
+      {
+        path: 'projects/:projectId/deleted',
+        element: <ProjectDeleted/>,
       },
     ]
   },
