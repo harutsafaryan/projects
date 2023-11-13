@@ -1,7 +1,7 @@
 export default function ProjectDeleted() {
     return (
         <h1>
-            Project was succefully deleted!
+            Project was successfully deleted!
         </h1>
     )
 }
