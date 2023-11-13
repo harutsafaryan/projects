@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -14,6 +15,7 @@ import Root, { loader as projectsLoader } from './routes/root';
 import Project, { loader as projectLoader } from './routes/project';
 import NewProject, { loader as newProjectLoader, action as newProjectAction } from './routes/newProject';
 import ProjectDeleted from './routes/projectDeleted';
+import AddProduct from './routes/addProduct';
 
 const queryClient = new QueryClient();
 
@@ -40,9 +42,13 @@ const router = createBrowserRouter([
         loader: projectLoader(queryClient),
       },
       {
-        path: 'projects/:projectId/deleted',
+        path: 'projects/:projectId/destroy',
         element: <ProjectDeleted/>,
       },
+      {
+        path:'projects/:projectId/addproduct',
+        element: <AddProduct/>
+      }
     ]
   },
   {
