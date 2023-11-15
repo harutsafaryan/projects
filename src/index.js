@@ -15,7 +15,7 @@ import Root, { loader as projectsLoader } from './routes/root';
 import Project, { loader as projectLoader } from './routes/project';
 import NewProject, { loader as newProjectLoader, action as newProjectAction } from './routes/newProject';
 import ProjectDeleted from './routes/projectDeleted';
-import AddProduct from './routes/addProduct';
+import AddProduct, { loader as imageLoader } from './routes/addProduct';
 
 const queryClient = new QueryClient();
 
@@ -47,14 +47,15 @@ const router = createBrowserRouter([
       },
       {
         path:'projects/:projectId/addproduct',
-        element: <AddProduct/>
+        element: <AddProduct/>,
+        loader: imageLoader,
       }
     ]
   },
   {
     path: 'login',
     element: <Login />
-  },
+  }
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
