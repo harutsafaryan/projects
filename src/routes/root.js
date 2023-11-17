@@ -2,6 +2,8 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { getProjects } from "../api/projectApi";
 import { useQuery } from "@tanstack/react-query";
 import NavBar from "../components/navBar";
+import React from "react";
+
 
 const projectsQuery = () => ({
     queryKey: ['projects'],

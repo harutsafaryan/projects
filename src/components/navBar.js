@@ -1,5 +1,6 @@
 import { useAuthUser, useSignOut } from "react-auth-kit";
 import { NavLink } from "react-router-dom";
+import React from "react";
 
 export default function NavBar() {
     const auth = useAuthUser();

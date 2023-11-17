@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { deleteProject } from "../api/projectApi";
 import Button from 'react-bootstrap/Button';
+import React from "react";
 
 export default function ProjectDeleted() {
     const params = useParams();

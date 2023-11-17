@@ -1,7 +1,6 @@
 import axios from "axios";
 import { URI } from "../utility/constants";
 import getCookie from "../utility/getCookie";
-import { redirect } from "react-router-dom";
 
 const token = getCookie("_auth");
 const productApi = axios.create({
@@ -25,12 +24,18 @@ export async function getProduct(id) {
     return response.data;
 }
 
-export async function addProject(product) {
+export async function addProduct(product) {
     if (!token)
         return null;
 
-    const response = await productApi.post('/product', product)
-    return response;
+    try {
+
+        const response = await productApi.post('/product', product)
+        return response;
+    }
+    catch(error) {
+        console.log(error);
+    }
 }
 
 export async function deleteProduct(id) {

@@ -15,7 +15,7 @@ import Root, { loader as projectsLoader } from './routes/root';
 import Project, { loader as projectLoader } from './routes/project';
 import NewProject, { loader as newProjectLoader, action as newProjectAction } from './routes/newProject';
 import ProjectDeleted from './routes/projectDeleted';
-import AddProduct, { loader as imageLoader } from './routes/addProduct';
+import NewProduct, { loader as imageLoader, action as addProductAction } from './routes/newProduct';
 
 const queryClient = new QueryClient();
 
@@ -47,8 +47,9 @@ const router = createBrowserRouter([
       },
       {
         path:'projects/:projectId/addproduct',
-        element: <AddProduct/>,
+        element: <NewProduct/>,
         loader: imageLoader,
+        action: addProductAction(queryClient)
       }
     ]
   },
