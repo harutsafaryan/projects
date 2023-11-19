@@ -36,7 +36,7 @@ export default function Project() {
             <p>project id {project.id}</p>
             <p>project description {project.description}</p>
             <ProductDetails id={2} />
-            <ProductDetails id={1} />
+            <ProductDetails id={5} />
             <Button variant="danger" onClick={() => navigate('destroy')}> Delete</Button>
             <Button variant="success" onClick={() => navigate('addproduct')}>Add product</Button>
         </>

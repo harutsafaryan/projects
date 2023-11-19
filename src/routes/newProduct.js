@@ -1,11 +1,13 @@
 import Accordion from 'react-bootstrap/Accordion';
-import Image from 'react-bootstrap/Image';
 import { getImage } from '../api/imageApi';
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
 import { Form, redirect } from 'react-router-dom';
+import { Form as BootstrapForm } from 'react-bootstrap';
 import { addProduct } from '../api/productApi';
-import Circle from '../components/circle';
+import Simple from '../components/simple';
+import { simpleWindow } from '../utility/hooks/data';
+import { FcOk } from "react-icons/fc";
 
 
 const imageQuery = () => ({
@@ -26,6 +28,7 @@ export const action = (queryClient) =>
     async ({ request }) => {
         let formData = await request.formData();
         const product = Object.fromEntries(formData);
+        product.jsoninfo = JSON.stringify(simpleWindow);
         console.log('product...', product)
         const response = await addProduct(product);
         if (response.status === 200) {
@@ -43,7 +46,13 @@ export const action = (queryClient) =>
 
 export default function NewProduct() {
 
-    const { isLoading, isError, data: images, error } = useQuery(imageQuery());
+    const [info, setInfo] = useState({});
+    const [glassType, setglassType] = useState('');
+
+    console.log('info: ', info);
+    console.log('glassType: ', glassType);
+
+    const { isLoading, isError, error } = useQuery(imageQuery());
 
     if (isLoading) {
         return <span>Loading...</span>
@@ -53,10 +62,96 @@ export default function NewProduct() {
         return <span>Error: {error.message}</span>
     }
 
+    function handleWidthChange(e) {
+        if (isNaN(e.target.value))
+            return;
+        setInfo({
+            ...info,
+            size: {
+                ...info.size,
+                width: e.target.value
+            }
+        })
+    }
+
+    function handleHeightChange(e) {
+        if (isNaN(e.target.value))
+            return;
+        setInfo({
+            ...info,
+            size: {
+                ...info.size,
+                height: e.target.value
+            }
+        })
+    }
+
     return (
         <>
             <Accordion defaultActiveKey="0">
                 <Accordion.Item eventKey="0">
+                    <Accordion.Header>Type {info.seria && info.seria && <FcOk />}</Accordion.Header>
+                    <Accordion.Body>
+                        <input type='text' placeholder='type' onChange={(event) => setInfo({ ...info, type: event.target.value })} />
+                        <input type='text' placeholder='seria' onChange={(event) => setInfo({ ...info, seria: event.target.value })} />
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="1">
+                    <Accordion.Header>Sizes {info.size?.height && info.size?.width && <FcOk />}</Accordion.Header>
+                    <Accordion.Body>
+                        <input type="text" placeholder='width' onChange={handleWidthChange} />
+                        <input type="text" placeholder='height' onChange={handleHeightChange} />
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="2">
+                    <Accordion.Header>Slidings</Accordion.Header>
+                    <Accordion.Body>
+                        <Simple schema={simpleWindow} />
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="3">
+                    <Accordion.Header>Glazing</Accordion.Header>
+                    <Accordion.Body>
+                        <BootstrapForm >
+                            <div className='mb-3'>
+                                <BootstrapForm.Check inline value='none' name='group' onChange={() => setglassType(null)} type='radio' label="None" checked={!glassType} />
+                                <BootstrapForm.Check inline value='single' name='group' onChange={(e) => setglassType(e.target.value)} type='radio' label="Single glass" />
+                                <BootstrapForm.Check inline value='double' name='group' onChange={(e) => setglassType(e.target.value)} type='radio' label="Double glass" />
+                                <BootstrapForm.Check inline value='triple' name='group' onChange={(e) => setglassType(e.target.value)} type='radio' label="Triple glass" />
+                            </div>
+                            <div>
+                                <BootstrapForm.Select disabled={!glassType}>
+                                    <option>Select first glass</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </BootstrapForm.Select>
+
+                                <BootstrapForm.Label>Second glass</BootstrapForm.Label>
+                                <BootstrapForm.Control disabled={!glassType || glassType === 'single'} type="text" />
+
+                                <BootstrapForm.Label>Second glass</BootstrapForm.Label>
+                                <BootstrapForm.Control disabled={!glassType || glassType === 'single' || glassType === 'double'} type="text" />
+
+                            </div>
+                        </BootstrapForm>
+                    </Accordion.Body>
+                </Accordion.Item>
+            </Accordion>
+            <Form method='post'>
+                <input name='description' placeholder='description' value='test product' />
+                <input name='price' placeholder='price' value={500} />
+                <input name='projectId' placeholder='projectId' value={9} />
+                {/* <input name='stage' placeholder='stage' value={0} />  */}
+                {/* <input name='imageId' placeholder='stage' value={3} />  */}
+                <button type='submit'>New</button>
+            </Form>
+        </>
+    );
+}
+
+/** to show image
+ *     <Accordion.Item eventKey="0">
                     <Accordion.Header>Windows</Accordion.Header>
                     <Accordion.Body>
                         Windows templates
@@ -67,40 +162,9 @@ export default function NewProduct() {
                         }
                     </Accordion.Body>
                 </Accordion.Item>
-                <Accordion.Item eventKey="1">
-                    <Accordion.Header>Doors</Accordion.Header>
-                    <Accordion.Body>
-                        <Circle/>
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="2">
-                    <Accordion.Header>Slidings</Accordion.Header>
-                    <Accordion.Body>
-                        Slidings templates
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="3">
-                    <Accordion.Header>Folding doors</Accordion.Header>
-                    <Accordion.Body>
-                        Folding doors templates
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
-            <Form method='post'>
-                <input name='description' placeholder='description' value='test product' />
-                <input name='price' placeholder='price' value={500} />
-                <input name='length' placeholder='length' value={3000} />
-                <input name='width' placeholder='width' value={2400} />
-                {/* <input name='seria' placeholder='seria' value={Number(1)} /> */}
-                <input name='projectId' placeholder='projectId' value={21} />
-                {/* <input name='stage' placeholder='stage' value={1} />  */}
-                <input name='imageId' placeholder='stage' value={3} /> 
-                {/* <input name='userId' placeholder='userId' value={1} />  */}
-                <button type='submit'>New</button>
-            </Form>
-        </>
-    );
-}
+ */
+
+
 
 /* 
 import { useEffect, useState } from 'react';
