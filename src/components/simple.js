@@ -16,19 +16,19 @@ const getPixelRatio = context => {
 };
 
 
-export default function Simple({schema}) {
+export default function Simple({schema, w, h}) {
 
     if (!schema)
         return null;
 
-        let jsonData;    
-        try {
-            jsonData = JSON.parse(schema)    
-        }
-        catch(err) {
-            console.log('error: ', err);
-            return;
-        }
+        let jsonData  = schema;    
+        // try {
+        //     jsonData = JSON.parse(schema)    
+        // }
+        // catch(err) {
+        //     console.log('error: ', err);
+        //     return;
+        // }
     const ref = useRef();
 
     useEffect(() => {
@@ -50,30 +50,34 @@ export default function Simple({schema}) {
 
 
         console.log('ratio: ', ratio);
+        console.log('width: ', width);
+        console.log('height: ', height);
 
         context.save()
         context.translate(10, 10);
         context.scale(2, 2);
-        context.strokeRect(0, 0, jsonData.size.width, jsonData.size.height);
-        context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
+        context.strokeRect(0, 0, jsonData.size?.width, jsonData.size?.height);
+       // context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
 
-        context.beginPath();
-        context.moveTo(jsonData.impost[0].x1, jsonData.impost[0].y1);
-        context.lineTo(jsonData.impost[0].x2, jsonData.impost[0].y2);
+        // context.beginPath();
+        // context.moveTo(jsonData.impost[0].x1, jsonData.impost[0].y1);
+        // context.lineTo(jsonData.impost[0].x2, jsonData.impost[0].y2);
 
         
-        context.moveTo(jsonData.impost[1].x1, jsonData.impost[1].y1);
-        context.lineTo(jsonData.impost[1].x2, jsonData.impost[1].y2);
+        // context.moveTo(jsonData.impost[1].x1, jsonData.impost[1].y1);
+        // context.lineTo(jsonData.impost[1].x2, jsonData.impost[1].y2);
         context.stroke();
         context.restore();
 
     });
 
     return (
-        <canvas ref={ref} style={{ width: '200px', height: '150px' }} />
+        <canvas ref={ref} style={{ width: w, height: h }} />
     )
 }
 
 Simple.propTypes = {
-    schema: PropTypes.object.isRequired
+    schema: PropTypes.object.isRequired,
+    w: PropTypes.string.isRequired,
+    h: PropTypes.string.isRequired,
   }
