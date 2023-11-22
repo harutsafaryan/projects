@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { Form, redirect } from 'react-router-dom';
 import { Form as BootstrapForm } from 'react-bootstrap';
 import { addProduct } from '../api/productApi';
-import Simple from '../components/simple';
 import { simpleWindow } from '../utility/hooks/data';
 import { FcOk } from "react-icons/fc";
 
@@ -53,6 +52,8 @@ export default function NewProduct() {
 
     const [info, setInfo] = useState({});
     const [glassType, setglassType] = useState('');
+    const [vertical, setVertical] = useState(0);
+    const [horizontal, setHorizontal] = useState(0);
 
 
 
@@ -99,6 +100,21 @@ export default function NewProduct() {
             return
         if (!(e.key >= 0 && e.key <= 9))
             e.preventDefault();
+    }
+
+    function inputs(count) {
+        if (count === 0)
+            return null
+        else
+            return (
+                <Col> 
+                {
+                    for (let index = 0; index < count; index++) {
+                        <BootstrapForm.Control key={count}></BootstrapForm.Control>
+                    }
+                }
+                </Col>
+            )
     }
 
     return (
@@ -160,9 +176,54 @@ export default function NewProduct() {
                                 </Accordion.Body>
                             </Accordion.Item>
                             <Accordion.Item eventKey="2">
-                                <Accordion.Header>Slidings</Accordion.Header>
+                                <Accordion.Header>Dividers</Accordion.Header>
                                 <Accordion.Body>
-                                    <Simple schema={simpleWindow} />
+                                    <Container>
+                                        <Row>
+                                            <Col>
+                                                <Container>
+                                                    <Row>
+                                                        <Col>
+                                                            <BootstrapForm.Label>Verticals</BootstrapForm.Label>
+                                                        </Col>
+                                                        <Col>
+                                                            <BootstrapForm.Control
+                                                                type="number"
+                                                                min={0}
+                                                                max={5}
+                                                                onChange={(e) => setVertical(e.target.value)}
+                                                            />
+                                                        </Col>
+
+                                                    </Row>
+                                                </Container>
+                                                {inputs(vertical)}
+                                            </Col>
+                                            <Col>
+                                                <Container>
+                                                    <Row>
+                                                        <Col>
+                                                            <BootstrapForm.Label>Horizontals</BootstrapForm.Label>
+                                                        </Col>
+                                                        <Col>
+                                                            <BootstrapForm.Control
+                                                                type="number"
+                                                                min={0}
+                                                                max={5}
+                                                                onChange={(e) => setHorizontal(e.target.value)} />
+                                                        </Col>
+                                                        {
+                                                            horizontal ? (
+                                                                <Col>
+                                                                    <BootstrapForm.Control></BootstrapForm.Control>
+                                                                </Col>
+                                                            ) : null
+                                                        }
+                                                    </Row>
+                                                </Container>
+                                            </Col>
+                                        </Row>
+                                    </Container>
                                 </Accordion.Body>
                             </Accordion.Item>
                             <Accordion.Item eventKey="3">

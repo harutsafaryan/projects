@@ -36,37 +36,24 @@ export default function DrawOnline({ schema }) {
         let context = canvas.getContext('2d');
 
         let ratio = getPixelRatio(context);
-        let width = getComputedStyle(canvas)
-            .getPropertyValue('width')
-            .slice(0, -2);
-        console.log('ratio: ', ratio);
-
-        let height = getComputedStyle(canvas)
-            .getPropertyValue('height')
-            .slice(0, -2);
-
-        console.log('width: ', width);
-        console.log('height: ', height);
-
+        let width = getComputedStyle(canvas).getPropertyValue('width').slice(0, -2);
+        let height = getComputedStyle(canvas).getPropertyValue('height').slice(0, -2);
         canvas.width = width * ratio;
         canvas.height = height * ratio;
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
 
-        // context.translate(10, 10);
         context.strokeRect(0, 0, canvas.width, canvas.height);
         context.stroke();
 
-
         context.save()
-        const scaleWidth = (width - 20) / jsonData.size?.width;
-        const scaleHeight = (height - 20) / jsonData.size?.height;
+        const scaleWidth = (canvas.width - 20) / jsonData.size?.width;
+        const scaleHeight = (canvas.height - 20) / jsonData.size?.height;
 
         const minScale = Math.min(scaleWidth, scaleHeight);
 
-        context.scale(minScale, minScale);
         context.translate(10, 10);
-        context.strokeRect(0, 0, jsonData.size?.width, jsonData.size?.height);
+        context.strokeRect(0, 0, jsonData.size?.width * minScale, jsonData.size?.height * minScale);
 
 
         // context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
