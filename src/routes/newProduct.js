@@ -102,21 +102,6 @@ export default function NewProduct() {
             e.preventDefault();
     }
 
-    function inputs(count) {
-        if (count === 0)
-            return null
-        else
-            return (
-                <Col> 
-                {
-                    for (let index = 0; index < count; index++) {
-                        <BootstrapForm.Control key={count}></BootstrapForm.Control>
-                    }
-                }
-                </Col>
-            )
-    }
-
     return (
         <Container>
             <Row>
@@ -193,11 +178,10 @@ export default function NewProduct() {
                                                                 max={5}
                                                                 onChange={(e) => setVertical(e.target.value)}
                                                             />
+                                                            {[...new Array(Number(vertical))].map(index => <BootstrapForm.Control key={index} />)}
                                                         </Col>
-
                                                     </Row>
                                                 </Container>
-                                                {inputs(vertical)}
                                             </Col>
                                             <Col>
                                                 <Container>
