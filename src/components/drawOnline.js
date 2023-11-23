@@ -56,6 +56,14 @@ export default function DrawOnline({ schema }) {
         context.strokeRect(0, 0, jsonData.size?.width * minScale, jsonData.size?.height * minScale);
 
 
+        if (jsonData?.widths && jsonData?.widths.length > 0) {
+            let current = 0;
+            for (let width of jsonData.widths) {
+                current += width;
+                context.moveTo(current * minScale, 0 * minScale);
+                context.lineTo(current * minScale, jsonData.size.height * minScale);
+            }
+        }
         // context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
 
         // context.beginPath();

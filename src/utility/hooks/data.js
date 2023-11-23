@@ -9,5 +9,7 @@ export const simpleWindow = {
     ],
     sash: [
         { x: 50, y: 0, width: 50, height: 140 }
-    ]
+    ],
+    widths: [],
+    height:[]
 }
