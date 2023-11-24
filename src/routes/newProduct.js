@@ -147,18 +147,18 @@ export default function NewProduct() {
 
 	function calculateMatrix() {
 		let arr = [];
-		let rows = info.widths.length;
-		let columns = info.heights.length;
-		let x = 0;
-		
-		for (let i = 0; i < rows; i++) {
-			let y = 0;
+		let rows = info.heights.length;
+		let columns = info.widths.length;
+		let y = 0;
+
+		for (let i = 0; i <= rows; i++) {
+			let x = 0;
 			arr[i] = [];
-			for (let j = 0; j < columns; j++) {
+			for (let j = 0; j <= columns; j++) {
 				arr[i][j] = { x, y }
-				y += info.heights[j]
+				x += info.widths[j];
 			}
-			x += info.widths[i];
+			y += info.heights[i]
 		}
 
 		console.table(arr);
