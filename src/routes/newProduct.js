@@ -65,9 +65,6 @@ export default function NewProduct() {
 		return <span>Error: {error.message}</span>
 	}
 
-	// function handleMOuseMove(e) {
-	//     console.log(e.target.value);
-	// }
 
 	function handleWidthChange(e) {
 		if (isNaN(e.target.value))
@@ -93,7 +90,10 @@ export default function NewProduct() {
 		})
 	}
 
-	function handleWidthCountChange(e) {
+	function handleDividersCountChange(e, key) {
+		if (key !== 'widths' && key !== 'heights')
+			return;
+
 		const count = e.target.value
 		const initValue = info.size?.width / count;
 
@@ -102,12 +102,40 @@ export default function NewProduct() {
 			arr.push(initValue);
 		}
 
-		setVerticalCount(count);
-		setInfo({
-			...info,
-			widths: arr
-		})
-		console.log('info: ', info)
+		if (key === 'widths') {
+			setVerticalCount(count);
+			setInfo({
+				...info,
+				widths: arr
+			})
+		}
+		else { //heights
+			setHorizontalCount(count);
+			setInfo({
+				...info,
+				heights: arr
+			})
+		}
+	}
+
+	function handleSizeChange(e, key, index) {
+		if (key !== 'widths' && key !== 'heights')
+			return;
+
+		const newVal = e.target.value;
+		const arr = (key === 'widths') ? info.widths : info.heights;
+		arr[index] = Number(newVal);
+
+		if (key === 'widths')
+			setInfo({
+				...info,
+				widths: arr
+			})
+		else
+			setInfo({
+				...info,
+				heights: arr
+			})
 	}
 
 	function handleKeyInput(e) {
@@ -115,6 +143,25 @@ export default function NewProduct() {
 			return
 		if (!(e.key >= 0 && e.key <= 9))
 			e.preventDefault();
+	}
+
+	function calculateMatrix() {
+		let arr = [];
+		let rows = info.widths.length;
+		let columns = info.heights.length;
+		let x = 0;
+		
+		for (let i = 0; i < rows; i++) {
+			let y = 0;
+			arr[i] = [];
+			for (let j = 0; j < columns; j++) {
+				arr[i][j] = { x, y }
+				y += info.heights[j]
+			}
+			x += info.widths[i];
+		}
+
+		console.table(arr);
 	}
 
 	return (
@@ -191,19 +238,10 @@ export default function NewProduct() {
 																type="number"
 																min={0}
 																max={5}
-																onChange={handleWidthCountChange}
-															/>
+																onChange={(e) => handleDividersCountChange(e, 'widths')} />
 															{info?.widths?.map((width, index) =>
 																<div key={index}>
-																	<BootstrapForm.Control key={index} value={width} onChange={(e) => {
-																		const newVal = e.target.value;
-																		const arr = info.widths;
-																		arr[index] = newVal;
-																		setInfo({
-																			...info,
-																			widths: arr
-																		})
-																	}}/>
+																	<BootstrapForm.Control type='number' key={index} value={width} onChange={(e) => handleSizeChange(e, 'widths', index)} />
 																</div>
 															)}
 														</Col>
@@ -221,16 +259,15 @@ export default function NewProduct() {
 																type="number"
 																min={0}
 																max={5}
-																onChange={(e) => setHorizontalCount(e.target.value)} />
+																onChange={(e) => handleDividersCountChange(e, 'heights')} />
+															{info?.heights?.map((height, index) =>
+																<div key={index}>
+																	<BootstrapForm.Control type='number' key={index} value={height} onChange={(e) => handleSizeChange(e, 'heights', index)} />
+																</div>
+															)}
 														</Col>
-														{
-															horizontalCount ? (
-																<Col>
-																	<BootstrapForm.Control></BootstrapForm.Control>
-																</Col>
-															) : null
-														}
 													</Row>
+													<button onClick={calculateMatrix}>click</button>
 												</Container>
 											</Col>
 										</Row>
@@ -339,6 +376,7 @@ export default function NewProduct() {
 				</Col>
 				<Col>
 					<h3>View {verticalCount}</h3>
+					<h3>View {horizontalCount}</h3>
 					<DrawOnline schema={info} />
 				</Col>
 			</Row>

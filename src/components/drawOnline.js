@@ -64,6 +64,17 @@ export default function DrawOnline({ schema }) {
                 context.lineTo(current * minScale, jsonData.size.height * minScale);
             }
         }
+
+        if (jsonData?.heights && jsonData?.heights.length > 0) {
+            let current = 0;
+            for (let height of jsonData.heights) { 
+                current += height;
+                context.moveTo(0 * minScale, current * minScale);
+                context.lineTo(jsonData.size.height * minScale, current * minScale);
+            }
+        }
+
+
         // context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
 
         // context.beginPath();
