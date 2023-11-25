@@ -102,9 +102,9 @@ export default function NewProduct() {
 			arr.push(initValue);
 		}
 
-		const matrix = calculateMatrix();
 		if (key === 'widths') {
 			setVerticalCount(count);
+			const matrix = calculateMatrix(arr, info.heights);
 			setInfo({
 				...info,
 				widths: arr,
@@ -113,6 +113,7 @@ export default function NewProduct() {
 		}
 		else { //heights
 			setHorizontalCount(count);
+			const matrix = calculateMatrix(info.widths, arr);
 			setInfo({
 				...info,
 				heights: arr,
@@ -150,13 +151,13 @@ export default function NewProduct() {
 			e.preventDefault();
 	}
 
-	function calculateMatrix() {
+	function calculateMatrix(widths, heights) {
 		let arr = [];
-		let rows = info.heights?.length;
-		let columns = info.widths?.length;
+		let rows = heights?.length;
+		let columns = widths?.length;
 
-		if (rows <= 1 || columns <= 1)
-			return null;
+		// if (rows < 1 || columns < 1)
+		// 	return null;
 
 		let y = 0;
 
@@ -165,12 +166,11 @@ export default function NewProduct() {
 			arr[i] = [];
 			for (let j = 0; j <= columns; j++) {
 				arr[i][j] = { x, y }
-				x += info.widths[j];
+				x += widths[j];
 			}
-			y += info.heights[i]
+			y += heights[i]
 		}
 
-		console.table(arr);
 		return arr;
 	}
 

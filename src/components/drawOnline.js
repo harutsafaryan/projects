@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 
@@ -15,8 +15,40 @@ const getPixelRatio = context => {
     return (window.devicePixelRatio || 1) / backingStore;
 };
 
+const getRectFromMatrix = (matrix) => {
+    console.log('m: ', matrix)
+    const rects = [];
+    if (!matrix)
+        return rects;
+
+    const rows = matrix?.length;
+    if (rows === 0)
+        return rects;
+    const columns = matrix[matrix?.length - 1]?.length;
+
+    if (!rows || !columns)
+        return rects;
+
+    for (let i = 0; i < rows - 1; i++) {
+        for (let j = 0; j < columns - 1; j++) {
+            if (!matrix[i + 1][j + 1])
+                continue;
+
+            rects.push({
+                x: matrix[i][j].x,
+                y: matrix[i][j].y,
+                w: matrix[i + 1][j + 1].x,
+                h: matrix[i + 1][j + 1].y,
+            })
+
+        }
+    }
+    return rects;
+}
 
 export default function DrawOnline({ schema }) {
+
+    const [curruntPoint, setCurruntPoint] = useState({ x: 0, y: 0 });
 
     if (!schema)
         return null;
@@ -67,37 +99,41 @@ export default function DrawOnline({ schema }) {
 
         if (jsonData?.heights && jsonData?.heights.length > 0) {
             let current = 0;
-            for (let height of jsonData.heights) { 
+            for (let height of jsonData.heights) {
                 current += height;
                 context.moveTo(0 * minScale, current * minScale);
                 context.lineTo(jsonData.size.height * minScale, current * minScale);
             }
         }
 
-        if (jsonData.matrix) {
+        const rects = getRectFromMatrix(jsonData.matrix);
 
-            context.fillStyle = "rgb(200, 0, 0)";
-            context.fillRect(10, 10, jsonData.matrix[1, 1], jsonData.matrix[1, 1]);
-        }
+        //fiil just firtst rect
+        // if (jsonData.matrix?.length > 0 && jsonData.matrix[1]?.length > 0) {
 
+        //     context.fillStyle = "rgb(200, 0, 0)";
+        //     context.fillRect(0, 0, minScale * jsonData.matrix[1][1].x, minScale * jsonData.matrix[1][1].y);
+        //     console.log('xy:', jsonData.matrix[1][1].x, jsonData.matrix[1][1].y);
+        //     console.log('rects: ', rects);
+        // }
 
+        rects.forEach(rect => {
+            if (curruntPoint.x > rect.x && curruntPoint.y > rect.y && curruntPoint.x < rect.x + rect.w && curruntPoint.y < rect.y + rect.h) {
 
-        // context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
+                context.save();
+                context.fillStyle = "rgb(200, 0, 0)";
+                context.fillRect(minScale * rect.x, minScale * rect.y, minScale * (rect.x + rect.w), minScale * (rect.y + rect.h));
+                context.restore();
+            }
+        });
 
-        // context.beginPath();
-        // context.moveTo(jsonData.impost[0].x1, jsonData.impost[0].y1);
-        // context.lineTo(jsonData.impost[0].x2, jsonData.impost[0].y2);
-
-
-        // context.moveTo(jsonData.impost[1].x1, jsonData.impost[1].y1);
-        // context.lineTo(jsonData.impost[1].x2, jsonData.impost[1].y2);
         context.stroke();
         context.restore();
 
     });
 
     return (
-        <canvas onMouseMove={(e) => console.log('x: ', e.nativeEvent.offsetX, 'y: ', e.nativeEvent.offsetY)} ref={ref} style={{ width: '500px', height: '500px' }} />
+        <canvas onMouseMove={(e) => setCurruntPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })} ref={ref} style={{ width: '500px', height: '500px' }} />
     )
 }
 
