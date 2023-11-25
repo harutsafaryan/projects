@@ -102,20 +102,24 @@ export default function NewProduct() {
 			arr.push(initValue);
 		}
 
+		const matrix = calculateMatrix();
 		if (key === 'widths') {
 			setVerticalCount(count);
 			setInfo({
 				...info,
-				widths: arr
+				widths: arr,
+				matrix
 			})
 		}
 		else { //heights
 			setHorizontalCount(count);
 			setInfo({
 				...info,
-				heights: arr
+				heights: arr,
+				matrix
 			})
 		}
+
 	}
 
 	function handleSizeChange(e, key, index) {
@@ -139,6 +143,7 @@ export default function NewProduct() {
 	}
 
 	function handleKeyInput(e) {
+		if (e) return;
 		if (e.key === 'Backspace')
 			return
 		if (!(e.key >= 0 && e.key <= 9))
@@ -147,8 +152,12 @@ export default function NewProduct() {
 
 	function calculateMatrix() {
 		let arr = [];
-		let rows = info.heights.length;
-		let columns = info.widths.length;
+		let rows = info.heights?.length;
+		let columns = info.widths?.length;
+
+		if (rows <= 1 || columns <= 1)
+			return null;
+
 		let y = 0;
 
 		for (let i = 0; i <= rows; i++) {
@@ -162,6 +171,7 @@ export default function NewProduct() {
 		}
 
 		console.table(arr);
+		return arr;
 	}
 
 	return (

@@ -74,6 +74,13 @@ export default function DrawOnline({ schema }) {
             }
         }
 
+        if (jsonData.matrix) {
+
+            context.fillStyle = "rgb(200, 0, 0)";
+            context.fillRect(10, 10, jsonData.matrix[1, 1], jsonData.matrix[1, 1]);
+        }
+
+
 
         // context.strokeRect(jsonData.sash[0].x+5, jsonData.sash[0].y+5, jsonData.sash[0].width-10, jsonData.sash[0].height-10);
 
@@ -90,7 +97,7 @@ export default function DrawOnline({ schema }) {
     });
 
     return (
-        <canvas ref={ref} style={{ width: '500px', height: '500px' }} />
+        <canvas onMouseMove={(e) => console.log('x: ', e.nativeEvent.offsetX, 'y: ', e.nativeEvent.offsetY)} ref={ref} style={{ width: '500px', height: '500px' }} />
     )
 }
 
