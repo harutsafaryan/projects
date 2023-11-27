@@ -95,7 +95,9 @@ export default function NewProduct() {
 			return;
 
 		const count = e.target.value
-		const initValue = info.size?.width / count;
+		const initValue = (key === 'widths')
+			? info.size?.width / count
+			: info.size?.height / count;
 
 		let arr = [];
 		for (let index = 0; index < count; index++) {
@@ -277,7 +279,6 @@ export default function NewProduct() {
 															)}
 														</Col>
 													</Row>
-													<button onClick={calculateMatrix}>click</button>
 												</Container>
 											</Col>
 										</Row>
@@ -375,6 +376,12 @@ export default function NewProduct() {
 									</BootstrapForm>
 								</Accordion.Body>
 							</Accordion.Item>
+							{/* <Accordion.Item eventKey="4">
+								<Accordion.Header>Merge</Accordion.Header>
+								<Accordion.Body>
+
+								</Accordion.Body>
+							</Accordion.Item> */}
 						</Accordion>
 						<input name='description' placeholder='description' value='test product' />
 						<input name='price' placeholder='price' value={500} />
@@ -387,7 +394,7 @@ export default function NewProduct() {
 				<Col>
 					<h3>View {verticalCount}</h3>
 					<h3>View {horizontalCount}</h3>
-					<DrawOnline schema={info} />
+					<DrawOnline schema={info} setInfo={setInfo} />
 				</Col>
 			</Row>
 		</Container>

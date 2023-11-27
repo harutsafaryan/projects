@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { VscSymbolFile, VscSymbolNumeric, VscSourceControl, VscRefresh, VscSymbolRuler   } from "react-icons/vsc";
 
 
 const getPixelRatio = context => {
@@ -16,7 +17,6 @@ const getPixelRatio = context => {
 };
 
 const getRectFromMatrix = (matrix) => {
-    console.log('m: ', matrix)
     const rects = [];
     if (!matrix)
         return rects;
@@ -37,8 +37,8 @@ const getRectFromMatrix = (matrix) => {
             rects.push({
                 x: matrix[i][j].x,
                 y: matrix[i][j].y,
-                w: matrix[i + 1][j + 1].x,
-                h: matrix[i + 1][j + 1].y,
+                w: matrix[i + 1][j + 1].x - matrix[i][j].x,
+                h: matrix[i + 1][j + 1].y - matrix[i][j].y,
             })
 
         }
@@ -46,9 +46,11 @@ const getRectFromMatrix = (matrix) => {
     return rects;
 }
 
-export default function DrawOnline({ schema }) {
+export default function DrawOnline({ schema, setInfo }) {
 
-    const [curruntPoint, setCurruntPoint] = useState({ x: 0, y: 0 });
+    const [currentPoint, setCurrentPoint] = useState({ x: 0, y: 0 });
+    const [checkedRects, setCheckedRects] = useState([]);
+    let pointScale;
 
     if (!schema)
         return null;
@@ -62,6 +64,27 @@ export default function DrawOnline({ schema }) {
     //     return;
     // }
     const ref = useRef();
+
+    function handleCheck() {
+        const rects = getRectFromMatrix(jsonData.matrix);
+
+        rects.forEach(rect => {
+            if (currentPoint.x * pointScale > rect.x &&
+                currentPoint.y * pointScale > rect.y &&
+                currentPoint.x * pointScale < rect.x + rect.w &&
+                currentPoint.y * pointScale < rect.y + rect.h)
+                setCheckedRects([...checkedRects, rect]);
+        })
+    }
+
+    function handlePointRemove() {
+        const matrix = schema.matrix;
+        matrix[2][2] = { x: 40, y: 40 };
+        setInfo({
+            ...schema,
+            widths: schema.widths.map(w => w + 5)
+        })
+    }
 
     useEffect(() => {
         let canvas = ref.current;
@@ -83,6 +106,7 @@ export default function DrawOnline({ schema }) {
         const scaleHeight = (canvas.height - 20) / jsonData.size?.height;
 
         const minScale = Math.min(scaleWidth, scaleHeight);
+        pointScale = jsonData.size?.width / width;
 
         context.translate(10, 10);
         context.strokeRect(0, 0, jsonData.size?.width * minScale, jsonData.size?.height * minScale);
@@ -102,7 +126,7 @@ export default function DrawOnline({ schema }) {
             for (let height of jsonData.heights) {
                 current += height;
                 context.moveTo(0 * minScale, current * minScale);
-                context.lineTo(jsonData.size.height * minScale, current * minScale);
+                context.lineTo(jsonData.size.width * minScale, current * minScale);
             }
         }
 
@@ -118,13 +142,18 @@ export default function DrawOnline({ schema }) {
         // }
 
         rects.forEach(rect => {
-            if (curruntPoint.x > rect.x && curruntPoint.y > rect.y && curruntPoint.x < rect.x + rect.w && curruntPoint.y < rect.y + rect.h) {
-
-                context.save();
+            if (currentPoint.x * pointScale > rect.x &&
+                currentPoint.y * pointScale > rect.y &&
+                currentPoint.x * pointScale < rect.x + rect.w &&
+                currentPoint.y * pointScale < rect.y + rect.h) {
                 context.fillStyle = "rgb(200, 0, 0)";
-                context.fillRect(minScale * rect.x, minScale * rect.y, minScale * (rect.x + rect.w), minScale * (rect.y + rect.h));
-                context.restore();
+                context.fillRect(minScale * rect.x, minScale * rect.y, minScale * rect.w, minScale * rect.h);
             }
+        });
+
+        checkedRects.forEach(rect => {
+            context.fillStyle = "rgb(0, 0, 200)";
+            context.fillRect(minScale * rect.x, minScale * rect.y, minScale * rect.w, minScale * rect.h);
         });
 
         context.stroke();
@@ -133,12 +162,30 @@ export default function DrawOnline({ schema }) {
     });
 
     return (
-        <canvas onMouseMove={(e) => setCurruntPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })} ref={ref} style={{ width: '500px', height: '500px' }} />
+        <div>
+            <div>
+                <canvas
+                    onMouseMove={(e) => setCurrentPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })}
+                    onClick={handleCheck}
+                    onDoubleClick={handlePointRemove}
+                    ref={ref}
+                    style={{ width: '500px', height: '500px' }}
+                />
+            </div>
+            <div>
+                <button type='button' className='btn btn-light btn-lg' onClick={() => setInfo({})}><VscSymbolFile /></button>
+                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscSymbolNumeric color='green' /></button>
+                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscSourceControl color='red' /></button>
+                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscRefresh  color='red' /></button>
+                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscSymbolRuler  color='red' /></button>
+            </div>
+        </div>
     )
 }
-
+ 
 DrawOnline.propTypes = {
     schema: PropTypes.object.isRequired,
     w: PropTypes.string.isRequired,
     h: PropTypes.string.isRequired,
+    setInfo: PropTypes.object.isRequired
 }
