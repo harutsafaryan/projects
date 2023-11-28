@@ -91,7 +91,7 @@ export default function DrawOnline({ schema, setInfo }) {
                 if (i === index)
                     continue;
                 else
-                    arr.push(rects[i]);
+                    arr.push(checkedRects[i]);
             }
             setCheckedRects(arr)
         }
@@ -162,7 +162,7 @@ export default function DrawOnline({ schema, setInfo }) {
         // }
 
         rects.forEach(rect => {
-            if (currentPoint.x * pointScale > rect.x &&
+            if (currentPoint.x * pointScale > rect.x  &&
                 currentPoint.y * pointScale > rect.y &&
                 currentPoint.x * pointScale < rect.x + rect.w &&
                 currentPoint.y * pointScale < rect.y + rect.h) {
@@ -195,7 +195,7 @@ export default function DrawOnline({ schema, setInfo }) {
             <div>
                 <button type='button' className='btn btn-light' onClick={() => setInfo({})}><VscSymbolFile /></button>
                 <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><VscSymbolNumeric color='green' /></button>
-                <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><BsUnion color={(checkedRects.length > 0) ? 'red' : 'green'} /></button>
+                <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><BsUnion color={(checkedRects.length > 1) ? 'green' : 'black'} /></button>
                 <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><VscRefresh color='red' /></button>
                 <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><VscSymbolRuler color='red' /></button>
             </div>
