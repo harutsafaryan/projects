@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { VscSymbolFile, VscSymbolNumeric, VscSourceControl, VscRefresh, VscSymbolRuler   } from "react-icons/vsc";
+import { VscSymbolFile, VscSymbolNumeric, VscRefresh, VscSymbolRuler } from "react-icons/vsc";
+import { BsUnion } from "react-icons/bs";
 
 
 const getPixelRatio = context => {
@@ -68,13 +69,32 @@ export default function DrawOnline({ schema, setInfo }) {
     function handleCheck() {
         const rects = getRectFromMatrix(jsonData.matrix);
 
+        let current;
         rects.forEach(rect => {
             if (currentPoint.x * pointScale > rect.x &&
                 currentPoint.y * pointScale > rect.y &&
                 currentPoint.x * pointScale < rect.x + rect.w &&
                 currentPoint.y * pointScale < rect.y + rect.h)
-                setCheckedRects([...checkedRects, rect]);
+                current = rect;
         })
+
+        const currentStringify = JSON.stringify(current);
+        const checkedRectsStringify = checkedRects.map(r => JSON.stringify(r));
+
+        const index = checkedRectsStringify.indexOf(currentStringify);
+        if (index === -1) {
+            setCheckedRects([...checkedRects, current]);
+        }
+        else {
+            let arr = [];
+            for (let i = 0; i < checkedRects.length; i++) {
+                if (i === index)
+                    continue;
+                else
+                    arr.push(rects[i]);
+            }
+            setCheckedRects(arr)
+        }
     }
 
     function handlePointRemove() {
@@ -173,16 +193,16 @@ export default function DrawOnline({ schema, setInfo }) {
                 />
             </div>
             <div>
-                <button type='button' className='btn btn-light btn-lg' onClick={() => setInfo({})}><VscSymbolFile /></button>
-                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscSymbolNumeric color='green' /></button>
-                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscSourceControl color='red' /></button>
-                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscRefresh  color='red' /></button>
-                <button type='button' className='btn btn-light btn-lg' onClick={() => alert('clicked')}><VscSymbolRuler  color='red' /></button>
+                <button type='button' className='btn btn-light' onClick={() => setInfo({})}><VscSymbolFile /></button>
+                <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><VscSymbolNumeric color='green' /></button>
+                <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><BsUnion color={(checkedRects.length > 0) ? 'red' : 'green'} /></button>
+                <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><VscRefresh color='red' /></button>
+                <button type='button' className='btn btn-light' onClick={() => alert('clicked')}><VscSymbolRuler color='red' /></button>
             </div>
         </div>
     )
 }
- 
+
 DrawOnline.propTypes = {
     schema: PropTypes.object.isRequired,
     w: PropTypes.string.isRequired,

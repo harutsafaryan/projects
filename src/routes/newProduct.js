@@ -96,8 +96,8 @@ export default function NewProduct() {
 
 		const count = e.target.value
 		const initValue = (key === 'widths')
-			? info.size?.width / count
-			: info.size?.height / count;
+			? Math.round(info.size?.width / count)
+			: Math.round(info.size?.height / count);
 
 		let arr = [];
 		for (let index = 0; index < count; index++) {
