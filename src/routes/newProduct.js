@@ -54,6 +54,11 @@ export default function NewProduct() {
 	const [glassType, setglassType] = useState('');
 	const [verticalCount, setVerticalCount] = useState(0);
 	const [horizontalCount, setHorizontalCount] = useState(0);
+	const [matrix, setMatrix] = useState([
+		{
+			x: 0, y: 0, w: 0, h: 0
+		}
+	]);
 
 	const { isLoading, isError, error } = useQuery(imageQuery());
 
@@ -69,26 +74,21 @@ export default function NewProduct() {
 	function handleWidthChange(e) {
 		if (isNaN(e.target.value))
 			return;
-		setInfo({
-			...info,
-			size: {
-				...info.size,
-				width: e.target.value
-			}
-		})
+
+		const m = matrix[0];
+		m.w = e.target.value;
+		setMatrix(m);
 	}
 
 	function handleHeightChange(e) {
 		if (isNaN(e.target.value))
 			return;
-		setInfo({
-			...info,
-			size: {
-				...info.size,
-				height: e.target.value
-			}
-		})
-	}
+
+			const m = matrix[0];
+			m.h = e.target.value;
+			setMatrix(m);
+		}
+	
 
 	function handleDividersCountChange(e, key) {
 		if (key !== 'widths' && key !== 'heights')
