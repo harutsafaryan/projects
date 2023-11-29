@@ -84,45 +84,45 @@ export default function NewProduct() {
 		if (isNaN(e.target.value))
 			return;
 
-			const m = matrix[0];
-			m.h = e.target.value;
-			setMatrix(m);
-		}
-	
+		const m = matrix[0];
+		m.h = e.target.value;
+		setMatrix(m);
+	}
 
-	function handleDividersCountChange(e, key) {
-		if (key !== 'widths' && key !== 'heights')
-			return;
 
-		const count = e.target.value
-		const initValue = (key === 'widths')
-			? Math.round(info.size?.width / count)
-			: Math.round(info.size?.height / count);
-
-		let arr = [];
-		for (let index = 0; index < count; index++) {
-			arr.push(initValue);
-		}
+	function handleDividersCountChange(key, arr) {
+		let m = [];
 
 		if (key === 'widths') {
-			setVerticalCount(count);
-			const matrix = calculateMatrix(arr, info.heights);
-			setInfo({
-				...info,
-				widths: arr,
-				matrix
-			})
+			const x_increment = 0;
+			for (let i = 0; i < matrix.length; i++) {
+				for (let j = 0; j < arr.length; j++)
+					m[i][j] = {
+						x: x_increment,
+						y: matrix[i][0].y,
+						w: arr[j],
+						h: matrix[i][0].h
+					}
+				x_increment += arr[i];
+			}
+			setMatrix(m);
 		}
-		else { //heights
-			setHorizontalCount(count);
-			const matrix = calculateMatrix(info.widths, arr);
-			setInfo({
-				...info,
-				heights: arr,
-				matrix
-			})
+		else if (key === 'heights') {
+			const y_increment = 0;
+			for (let i = 0; i < arr.length; i++)
+				for (let j = 0; j < matrix[0].length; j++) {
+					m[i][j] = {
+						x: matrix[0][j].x,
+						y: y_increment,
+						w: matrix[0][j].w,
+						h: arr[i]
+					}
+					y_increment += arr[i];
+				}
+			setMatrix(m);
 		}
-
+		else
+			return;
 	}
 
 	function handleSizeChange(e, key, index) {
