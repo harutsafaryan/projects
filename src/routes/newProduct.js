@@ -54,6 +54,9 @@ export default function NewProduct() {
 	const [glassType, setglassType] = useState('');
 	const [verticalCount, setVerticalCount] = useState(0);
 	const [horizontalCount, setHorizontalCount] = useState(0);
+
+	const [widths, setWidths] = useState([]);
+	const [heights, setHeights] = useState([]);
 	const [matrix, setMatrix] = useState([
 		{
 			x: 0, y: 0, w: 0, h: 0
@@ -90,39 +93,25 @@ export default function NewProduct() {
 	}
 
 
-	function handleDividersCountChange(key, arr) {
+	function handleDividersCountChange() {
 		let m = [];
+		const x_increment = 0;
+		const y_increment = 0;
 
-		if (key === 'widths') {
-			const x_increment = 0;
-			for (let i = 0; i < matrix.length; i++) {
-				for (let j = 0; j < arr.length; j++)
-					m[i][j] = {
-						x: x_increment,
-						y: matrix[i][0].y,
-						w: arr[j],
-						h: matrix[i][0].h
-					}
-				x_increment += arr[i];
-			}
-			setMatrix(m);
-		}
-		else if (key === 'heights') {
-			const y_increment = 0;
-			for (let i = 0; i < arr.length; i++)
-				for (let j = 0; j < matrix[0].length; j++) {
-					m[i][j] = {
-						x: matrix[0][j].x,
-						y: y_increment,
-						w: matrix[0][j].w,
-						h: arr[i]
-					}
-					y_increment += arr[i];
+		for (let i = 0; i < heights.length; i++) {
+			for (let j = 0; j < widths.length; j++) {
+				m[i][j] = {
+					x: x_increment,
+					y: y_increment,
+					w: widths[j],
+					h: heights[i]
 				}
-			setMatrix(m);
+				x_increment += widths[j];
+			}
+			x_increment = 0;
+			y_increment += heights[i];
 		}
-		else
-			return;
+		setMatrix(m);
 	}
 
 	function handleSizeChange(e, key, index) {
@@ -134,15 +123,9 @@ export default function NewProduct() {
 		arr[index] = Number(newVal);
 
 		if (key === 'widths')
-			setInfo({
-				...info,
-				widths: arr
-			})
+			setWidths(arr);
 		else
-			setInfo({
-				...info,
-				heights: arr
-			})
+			setHeights(arr)
 	}
 
 	function handleKeyInput(e) {
