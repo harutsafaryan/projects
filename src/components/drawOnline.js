@@ -67,7 +67,7 @@ export default function DrawOnline({ schema, setInfo }) {
     const ref = useRef();
 
     function handleCheck() {
-        const rects = getRectFromMatrix(jsonData.matrix);
+        const rects = getRectFromMatrix(jsonData);
 
         let current;
         rects.forEach(rect => {
@@ -97,15 +97,6 @@ export default function DrawOnline({ schema, setInfo }) {
         }
     }
 
-    function handlePointRemove() {
-        const matrix = schema.matrix;
-        matrix[2][2] = { x: 40, y: 40 };
-        setInfo({
-            ...schema,
-            widths: schema.widths.map(w => w + 5)
-        })
-    }
-
     useEffect(() => {
         let canvas = ref.current;
         let context = canvas.getContext('2d');
@@ -128,8 +119,11 @@ export default function DrawOnline({ schema, setInfo }) {
         const minScale = Math.min(scaleWidth, scaleHeight);
         pointScale = jsonData.size?.width / width;
 
+        const totalWidth = 10; // jsonData[0].reduce((sum, current) => { return sum + current.w }, 0);
+        const totalHeight = 20; // jsonData.reduce((sum, current) => { return sum + current[0].h }, 0)
+
         context.translate(10, 10);
-        context.strokeRect(0, 0, jsonData.size?.width * minScale, jsonData.size?.height * minScale);
+        context.strokeRect(0, 0, totalWidth * minScale, totalHeight * minScale);
 
 
         if (jsonData?.widths && jsonData?.widths.length > 0) {
@@ -162,7 +156,7 @@ export default function DrawOnline({ schema, setInfo }) {
         // }
 
         rects.forEach(rect => {
-            if (currentPoint.x * pointScale > rect.x  &&
+            if (currentPoint.x * pointScale > rect.x &&
                 currentPoint.y * pointScale > rect.y &&
                 currentPoint.x * pointScale < rect.x + rect.w &&
                 currentPoint.y * pointScale < rect.y + rect.h) {
@@ -187,7 +181,6 @@ export default function DrawOnline({ schema, setInfo }) {
                 <canvas
                     onMouseMove={(e) => setCurrentPoint({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY })}
                     onClick={handleCheck}
-                    onDoubleClick={handlePointRemove}
                     ref={ref}
                     style={{ width: '500px', height: '500px' }}
                 />

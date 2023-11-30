@@ -11,7 +11,7 @@ import { FcOk } from "react-icons/fc";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import DrawOnline from '../components/drawOnline';
+//import DrawOnline from '../components/drawOnline';
 
 
 const imageQuery = () => ({
@@ -52,8 +52,6 @@ export default function NewProduct() {
 
 	const [info, setInfo] = useState({});
 	const [glassType, setglassType] = useState('');
-	const [verticalCount, setVerticalCount] = useState(0);
-	const [horizontalCount, setHorizontalCount] = useState(0);
 
 	const [widths, setWidths] = useState([]);
 	const [heights, setHeights] = useState([]);
@@ -77,28 +75,25 @@ export default function NewProduct() {
 	function handleWidthChange(e) {
 		if (isNaN(e.target.value))
 			return;
-
-		const m = matrix[0];
-		m.w = e.target.value;
-		setMatrix(m);
+		else
+			setWidths([Number(e.target.value)])
 	}
 
 	function handleHeightChange(e) {
 		if (isNaN(e.target.value))
 			return;
-
-		const m = matrix[0];
-		m.h = e.target.value;
-		setMatrix(m);
+		else
+			setHeights([Number(e.target.value)]);
 	}
 
 
 	function handleDividersCountChange() {
-		let m = [];
-		const x_increment = 0;
-		const y_increment = 0;
+		let m = []	;
+		let x_increment = 0;
+		let y_increment = 0;
 
 		for (let i = 0; i < heights.length; i++) {
+			m[i]=[];
 			for (let j = 0; j < widths.length; j++) {
 				m[i][j] = {
 					x: x_increment,
@@ -112,6 +107,7 @@ export default function NewProduct() {
 			y_increment += heights[i];
 		}
 		setMatrix(m);
+		console.log(matrix);
 	}
 
 	function handleSizeChange(e, key, index) {
@@ -119,7 +115,7 @@ export default function NewProduct() {
 			return;
 
 		const newVal = e.target.value;
-		const arr = (key === 'widths') ? info.widths : info.heights;
+		const arr = (key === 'widths') ? widths : heights;
 		arr[index] = Number(newVal);
 
 		if (key === 'widths')
@@ -134,29 +130,6 @@ export default function NewProduct() {
 			return
 		if (!(e.key >= 0 && e.key <= 9))
 			e.preventDefault();
-	}
-
-	function calculateMatrix(widths, heights) {
-		let arr = [];
-		let rows = heights?.length;
-		let columns = widths?.length;
-
-		// if (rows < 1 || columns < 1)
-		// 	return null;
-
-		let y = 0;
-
-		for (let i = 0; i <= rows; i++) {
-			let x = 0;
-			arr[i] = [];
-			for (let j = 0; j <= columns; j++) {
-				arr[i][j] = { x, y }
-				x += widths[j];
-			}
-			y += heights[i]
-		}
-
-		return arr;
 	}
 
 	return (
@@ -234,7 +207,7 @@ export default function NewProduct() {
 																min={0}
 																max={5}
 																onChange={(e) => handleDividersCountChange(e, 'widths')} />
-															{info?.widths?.map((width, index) =>
+															{widths?.map((width, index) =>
 																<div key={index}>
 																	<BootstrapForm.Control type='number' key={index} value={width} onChange={(e) => handleSizeChange(e, 'widths', index)} />
 																</div>
@@ -255,7 +228,7 @@ export default function NewProduct() {
 																min={0}
 																max={5}
 																onChange={(e) => handleDividersCountChange(e, 'heights')} />
-															{info?.heights?.map((height, index) =>
+															{heights?.map((height, index) =>
 																<div key={index}>
 																	<BootstrapForm.Control type='number' key={index} value={height} onChange={(e) => handleSizeChange(e, 'heights', index)} />
 																</div>
@@ -374,11 +347,9 @@ export default function NewProduct() {
 						<button type='submit'>New</button>
 					</Form>
 				</Col>
-				<Col>
-					<h3>View {verticalCount}</h3>
-					<h3>View {horizontalCount}</h3>
-					<DrawOnline schema={info} setInfo={setInfo} />
-				</Col>
+				{/* <Col>
+					<DrawOnline schema={matrix} setInfo={setInfo} />
+				</Col> */}
 			</Row>
 		</Container>
 
